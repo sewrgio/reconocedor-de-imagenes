@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusVision | Reconocedor de Edificios</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- ONNX Runtime Web -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>NexusVision</h1>
+            <p class="subtitle">Sistema Inteligente de Reconocimiento Arquitectónico</p>
+        </header>
+
+        <main class="main-layout">
+            <section class="card">
+                <div class="viewfinder">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas-preview" class="hidden"></canvas>
+                </div>
+                <div class="controls">
+                    <button id="start-btn" class="btn btn-primary">
+                        <span id="btn-icon">📸</span>
+                        <span id="btn-text">Iniciar Cámara</span>
+                    </button>
+                    <button id="capture-btn" class="btn btn-secondary" disabled>
+                        <span>🎯</span> Capturar y Analizar
+                    </button>
+                </div>
+            </section>
+
+            <aside class="results-panel">
+                <div class="card">
+                    <div class="status-badge" id="model-status">
+                        <div class="loader" id="model-loader"></div>
+                        <span id="status-text">Cargando Modelo ONNX...</span>
+                    </div>
+
+                    <div class="confidence-meter">
+                        <div class="info-item" style="border: none;">
+                            <span class="info-label">Confianza del Reconocimiento</span>
+                            <span class="info-value" id="confidence-pct">0%</span>
+                        </div>
+                        <div class="meter-bar-bg">
+                            <div class="meter-bar-fill" id="meter-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Especificaciones del Modelo</h3>
+                    <div style="margin-top: 1rem;">
+                        <div class="info-item">
+                            <span class="info-label">Arquitectura</span>
+                            <span class="info-value">CNN (Custom)</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Input Shape</span>
+                            <span class="info-value">[1, 224, 224, 3]</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Formato</span>
+                            <span class="info-value">ONNX v12</span>
+                        </div>
+                        <div class="info-item" style="border: none;">
+                            <span class="info-label">Tipo de Dato</span>
+                            <span class="info-value">Float32</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
