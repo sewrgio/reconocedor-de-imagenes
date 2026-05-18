@@ -194,7 +194,65 @@ Adicionalmente se genera:
 
 ---
 
-## 7. Estructura del Proyecto
+## 7. Sistema de Carga de Imágenes
+
+### 7.1 Métodos de Entrada Disponibles
+
+El sistema NexusVision soporta dos métodos principales para proporcionar imágenes al modelo de inferencia:
+
+| Método | Descripción | Caso de Uso |
+| :--- | :--- | :--- |
+| **Cámara en Tiempo Real** | Captura directa desde cámara web del dispositivo | Análisis rápido de edificios en ubicación física |
+| **Carga de Archivo** | Subida de imágenes desde almacenamiento local (JPG, PNG) | Análisis de imágenes almacenadas, batch processing |
+
+### 7.2 Flujo de Carga de Imágenes
+
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│  Selección   │ →  │  Validación  │ →  │  Preproceso  │ →  │  Inferencia  │
+│  (Input)     │    │  (Formato)   │    │  (224×224)   │    │  (ONNX)      │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+```
+
+### 7.3 Especificaciones de Archivos Soportados
+
+| Formato | Extensiones | Tamaño Máximo | Notas |
+| :--- | :--- | :--- | :--- |
+| **JPEG** | .jpg, .jpeg | 10MB | Formato recomendado (compresión eficiente) |
+| **PNG** | .png | 10MB | Soporta transparencia (canal alpha ignorado) |
+| **WebP** | .webp | 10MB | Formato moderno, alta compresión |
+
+### 7.4 Proceso de Preprocesamiento
+
+Todas las imágenes (cámara o archivo) pasan por el mismo pipeline de preprocesamiento:
+
+1. **Redimensionamiento**: Escalado a 224×224 píxeles (mantiene aspect ratio con padding si es necesario)
+2. **Normalización**: Valores de píxeles convertidos de [0, 255] a [0.0, 1.0]
+3. **Conversión a Tensor**: Transformación a formato Float32 [1, 224, 224, 3] (NHWC)
+4. **Extracción de Canales**: Separación RGB (canal alpha descartado si existe)
+
+### 7.5 Interfaz de Usuario
+
+La interfaz web proporciona:
+- **Botón de Cámara**: Inicia stream de video en tiempo real
+- **Botón de Captura**: Toma frame actual del video para análisis
+- **Input de Archivo**: Selector de archivos locales (drag & drop soportado)
+- **Preview Visual**: Muestra la imagen antes de procesar
+- **Indicador de Proceso**: Loader durante preprocesamiento e inferencia
+
+### 7.6 Consideraciones de Rendimiento
+
+| Operación | Tiempo Estimado | Optimización |
+| :--- | :--- | :--- |
+| Carga de archivo | < 100ms | FileReader API asíncrona |
+| Redimensionamiento | < 50ms | Canvas 2D API hardware-accelerated |
+| Normalización | < 30ms | Operaciones vectorizadas Float32Array |
+| Inferencia ONNX | 50-100ms | ONNX Runtime Web (WebAssembly) |
+| **Total** | **~200-300ms** | Pipeline completamente asíncrono |
+
+---
+
+## 8. Estructura del Proyecto
 
 ```
 reconocedor-de-imagenes/
@@ -217,21 +275,21 @@ reconocedor-de-imagenes/
 
 ---
 
-## 8. Requisitos del Sistema
+## 9. Requisitos del Sistema
 
-### 8.1 Para Entrenamiento
+### 9.1 Para Entrenamiento
 - Python 3.8+
 - PyTorch 2.0+
 - GPU (opcional, recomendada para datasets grandes)
 - 4GB+ RAM
 
-### 8.2 Para Inferencia Web
+### 9.2 Para Inferencia Web
 - Navegador moderno con soporte WebAssembly (Chrome 80+, Firefox 78+, Safari 14+)
 - Cámara web (opcional, para modo en vivo)
 
 ---
 
-## 9. Conclusiones y Recomendaciones
+## 10. Conclusiones y Recomendaciones
 
 1. **Arquitectura adecuada**: La CNN de 3 capas convolucionales con ~3.3M parámetros ofrece un balance óptimo entre precisión y velocidad para clasificación binaria.
 
@@ -249,6 +307,6 @@ reconocedor-de-imagenes/
 
 ---
 
-*Preparado por: Antigravity AI Assistant*
+*Preparado por: sergio malave*
 *Fecha: 15 de mayo de 2026*
-*Versión: 2.0*
+*Versión: 3.0*

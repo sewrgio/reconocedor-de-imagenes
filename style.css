@@ -101,6 +101,15 @@ p.subtitle {
     justify-content: center;
 }
 
+.file-upload-section {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+}
+
 .btn {
     padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
@@ -132,6 +141,16 @@ p.subtitle {
 
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-tertiary {
+    background: linear-gradient(to right, #10b981, #34d399);
+    color: white;
+}
+
+.btn-tertiary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
 }
 
 .results-panel {
